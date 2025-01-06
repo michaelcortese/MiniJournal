@@ -1,19 +1,34 @@
-import { Suspense } from "react";
-import { useRoutes, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./lib/auth";
 import Home from "./components/home";
-import routes from "tempo-routes";
+import AuthCallback from "./components/auth/AuthCallback";
 
-function App() {
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <AuthProvider>
+        <Home />
+      </AuthProvider>
+    ),
+  },
+  {
+    path: "/auth/callback",
+    element: (
+      <AuthProvider>
+        <AuthCallback />
+      </AuthProvider>
+    ),
+  },
+]);
+
+export default function App() {
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-      </>
-    </Suspense>
+    <RouterProvider
+      router={router}
+      future={{
+        v7_startTransition: true,
+      }}
+    />
   );
 }
-
-export default App;
